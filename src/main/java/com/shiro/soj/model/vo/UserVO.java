@@ -1,8 +1,4 @@
-package com.shiro.soj.model.entity;
-
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+package com.shiro.soj.model.vo;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -11,28 +7,17 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
- * 用户
+ * 已登录用户视图（脱敏）
  *
  * @author shiro
- */
-@TableName(value = "user")
+ **/
 @Data
-public class User implements Serializable {
+public class UserVO implements Serializable {
 
     /**
-     * id
+     * 用户 id
      */
     private Long id;
-
-    /**
-     * 用户账号
-     */
-    private String userAccount;
-
-    /**
-     * 用户密码
-     */
-    private String userPassword;
 
     /**
      * 用户昵称
@@ -64,13 +49,6 @@ public class User implements Serializable {
      */
     private LocalDateTime updateTime;
 
-    /**
-     * 是否删除
-     */
-    @TableLogic
-    private Integer isDelete;
-
     @Serial
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
