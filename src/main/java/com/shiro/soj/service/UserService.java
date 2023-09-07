@@ -27,4 +27,17 @@ public interface UserService extends IService<User> {
      * @return 用户信息
      */
     UserVO getLoginUser();
+
+    /**
+     * 获取登录用户是否为管理员
+     * @return 是否为管理员
+     */
+    boolean isAdmin();
+
+    /**
+     *
+     * @param user 用户
+     * @return 用户信息
+     */
+    UserVO getUserVO(User user);
 }

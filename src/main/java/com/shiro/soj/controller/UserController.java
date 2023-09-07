@@ -1,6 +1,6 @@
 package com.shiro.soj.controller;
 
-import com.shiro.soj.common.ErrorCode;
+import enums.ErrorCode;
 import com.shiro.soj.common.Result;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.model.dto.user.UserLoginDTO;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/user")
-@Tag(name = "用户相关接口")
+@Tag(name = "user", description = "用户相关接口")
 public class UserController {
 
     @Resource
@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "用户登录")
+    @Operation(summary = "用户登入")
     public Result<String> userLogin(@RequestBody UserLoginDTO userLoginDTO) {
         if (userLoginDTO == null || StringUtils.isAnyBlank(userLoginDTO.getUserAccount(), userLoginDTO.getUserPassword())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");

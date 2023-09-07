@@ -1,6 +1,6 @@
 package com.shiro.soj.exception;
 
-import com.shiro.soj.common.ErrorCode;
+import enums.ErrorCode;
 import lombok.Getter;
 
 @Getter

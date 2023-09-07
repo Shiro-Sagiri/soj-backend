@@ -2,7 +2,8 @@ package com.shiro.soj.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.shiro.soj.common.ErrorCode;
+import enums.ErrorCode;
+import com.shiro.soj.constant.UserConstant;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.mapper.UserMapper;
 import com.shiro.soj.model.dto.user.UserLoginDTO;
@@ -50,11 +51,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = new User();
         user.setUserAccount(userRegisterDTO.getUserAccount());
         user.setUserPassword(encryptPassword);
+        user.setUserName(userRegisterDTO.getUserAccount());
+        user.setUserRole(UserConstant.DEFAULT_ROLE);
         boolean res = save(user);
         if (!res) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "注册失败,系统异常");
         }
         return user.getId();
+    }
+
+    @Override
+    public UserVO getUserVO(User user) {
+        if (user != null) {
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isAdmin() {
+        if (ThreadLocalUtil.getUserId() == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        } else {
+            return baseMapper.selectById(ThreadLocalUtil.getUserId()).getUserRole().equals(UserConstant.ADMIN_ROLE);
+        }
     }
 
     @Override

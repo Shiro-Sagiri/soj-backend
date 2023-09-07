@@ -4,7 +4,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.shiro.soj.model.entity.User;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 /**
  * 已登录用户视图（脱敏）
@@ -48,6 +50,12 @@ public class UserVO implements Serializable {
      * 更新时间
      */
     private LocalDateTime updateTime;
+
+    public static User toUser(UserVO userVO) {
+        User user = new User();
+        BeanUtils.copyProperties(userVO, user);
+        return user;
+    }
 
     @Serial
     private static final long serialVersionUID = 1L;

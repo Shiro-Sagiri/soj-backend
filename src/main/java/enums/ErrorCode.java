@@ -1,4 +1,4 @@
-package com.shiro.soj.common;
+package enums;
 
 import lombok.Getter;
 

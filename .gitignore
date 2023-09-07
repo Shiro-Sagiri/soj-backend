@@ -1,8 +1,19 @@
+.gitignore
+*.class
+*.log
+*.jar
+*.war
+.git
+.mvn
+mvnw
+*.cmd
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+!**/src/main/resources/application-dev.yml
 
 ### STS ###
 .apt_generated

@@ -1,6 +1,6 @@
 package com.shiro.soj.exception;
 
-import com.shiro.soj.common.ErrorCode;
+import enums.ErrorCode;
 import com.shiro.soj.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,5 +1,6 @@
 package com.shiro.soj.common;
 
+import enums.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

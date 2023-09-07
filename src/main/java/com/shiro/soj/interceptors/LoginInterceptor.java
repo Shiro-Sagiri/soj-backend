@@ -1,6 +1,6 @@
 package com.shiro.soj.interceptors;
 
-import com.shiro.soj.common.ErrorCode;
+import enums.ErrorCode;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.utils.JwtUtil;
 import com.shiro.soj.utils.ThreadLocalUtil;
@@ -40,7 +40,7 @@ public class LoginInterceptor implements HandlerInterceptor {
      * 整个请求结束之后被调用，也就是在DispatchServlet渲染了对应的视图之后执行（主要用于进行资源清理工作）
      */
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         //清除线程变量
         ThreadLocalUtil.clear();
     }
