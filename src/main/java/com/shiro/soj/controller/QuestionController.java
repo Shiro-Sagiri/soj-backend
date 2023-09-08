@@ -1,5 +1,6 @@
 package com.shiro.soj.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
@@ -7,20 +8,18 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.shiro.soj.annotation.AuthCheck;
 import com.shiro.soj.common.DeleteRequest;
+import com.shiro.soj.model.dto.question.*;
 import enums.ErrorCode;
 import com.shiro.soj.common.Result;
 import com.shiro.soj.constant.UserConstant;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.exception.ThrowUtils;
-import com.shiro.soj.model.dto.question.QuestionAddRequest;
-import com.shiro.soj.model.dto.question.QuestionEditRequest;
-import com.shiro.soj.model.dto.question.QuestionQueryRequest;
-import com.shiro.soj.model.dto.question.QuestionUpdateRequest;
 import com.shiro.soj.model.entity.Question;
 import com.shiro.soj.model.vo.QuestionVO;
 import com.shiro.soj.service.QuestionService;
 import com.shiro.soj.service.UserService;
 import com.shiro.soj.utils.ThreadLocalUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -51,22 +50,29 @@ public class QuestionController {
     /**
      * 创建(管理员)
      *
-     * @param QuestionAddRequest 添加问题DTO
+     * @param questionAddRequest 添加问题DTO
      * @return Result<Long>
      */
     @PostMapping()
-    public Result<Long> addQuestion(@RequestBody QuestionAddRequest QuestionAddRequest) {
-        if (QuestionAddRequest == null) {
+    @Operation(summary = "创建问题", description = "创建问题")
+    public Result<Long> addQuestion(@RequestBody QuestionAddRequest questionAddRequest) {
+        if (questionAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+
+        //封装参数
         Question question = new Question();
-        BeanUtils.copyProperties(QuestionAddRequest, question);
-        List<String> tags = QuestionAddRequest.getTags();
+        BeanUtils.copyProperties(questionAddRequest, question);
+        List<String> tags = questionAddRequest.getTags();
         if (tags != null) {
             question.setTags(GSON.toJson(tags));
         }
-        questionService.validQuestion(question, true);
+        question.setJudgeConfig(JSONUtil.toJsonStr(questionAddRequest.getJudgeConfig()));
+        List<JudgeCase> judgeCaseList = questionAddRequest.getJudgeCase();
+        List<String> stringList = judgeCaseList.stream().map(JSONUtil::toJsonStr).toList();
+        question.setJudgeCase(stringList.toString());
         question.setUserId(ThreadLocalUtil.getUserId());
+        questionService.validQuestion(question, true);
         boolean result = questionService.save(question);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return Result.success(question.getId()).setMessage("问题创建成功");
@@ -79,6 +85,7 @@ public class QuestionController {
      * @return Result<Boolean>
      */
     @DeleteMapping("/delete")
+    @Operation(summary = "删除问题", description = "删除问题")
     public Result<Boolean> deleteQuestion(@RequestBody DeleteRequest deleteRequest) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -103,16 +110,28 @@ public class QuestionController {
      */
     @PutMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @Operation(summary = "更新问题", description = "更新问题")
     public Result<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest) {
         if (questionUpdateRequest == null || questionUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+
+        //封装参数
         Question question = new Question();
         BeanUtils.copyProperties(questionUpdateRequest, question);
         List<String> tags = questionUpdateRequest.getTags();
         if (tags != null) {
             question.setTags(GSON.toJson(tags));
         }
+        if (questionUpdateRequest.getJudgeConfig() != null) {
+            question.setJudgeConfig(JSONUtil.toJsonStr(questionUpdateRequest.getJudgeConfig()));
+        }
+        List<JudgeCase> judgeCaseList = questionUpdateRequest.getJudgeCase();
+        if (judgeCaseList != null) {
+            List<String> stringList = judgeCaseList.stream().map(JSONUtil::toJsonStr).toList();
+            question.setJudgeCase(stringList.toString());
+        }
+
         // 参数校验
         questionService.validQuestion(question, false);
         Long id = questionUpdateRequest.getId();
@@ -130,6 +149,7 @@ public class QuestionController {
      * @return Result<Question>
      */
     @GetMapping()
+    @Operation(summary = "根据id获取问题", description = "根据id获取问题")
     public Result<QuestionVO> getQuestionVOById(Long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -138,7 +158,7 @@ public class QuestionController {
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        return Result.success(questionService.getQuestionVO(question));
+        return Result.success(questionService.getQuestionVO(question)).setMessage("获取问题成功");
     }
 
     /**
@@ -148,6 +168,7 @@ public class QuestionController {
      * @return Result<Page < QuestionVO>>
      */
     @PostMapping("/list")
+    @Operation(summary = "分页获取问题列表", description = "分页获取问题列表")
     public Result<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
@@ -155,7 +176,7 @@ public class QuestionController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         Page<Question> QuestionPage = questionService.page(new Page<>(current, size),
                 questionService.getQueryWrapper(questionQueryRequest));
-        return Result.success(questionService.getQuestionVOPage(QuestionPage));
+        return Result.success(questionService.getQuestionVOPage(QuestionPage)).setMessage("获取问题列表成功");
     }
 
     /**
@@ -165,6 +186,7 @@ public class QuestionController {
      * @return Result<Page < QuestionVO>>
      */
     @PostMapping("/my/list")
+    @Operation(summary = "分页获取当前用户创建的问题列表", description = "分页获取当前用户创建的问题列表")
     public Result<Page<QuestionVO>> listMyQuestionVOByPage(@RequestBody QuestionQueryRequest QuestionQueryRequest) {
         if (QuestionQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -176,7 +198,7 @@ public class QuestionController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         Page<Question> QuestionPage = questionService.page(new Page<>(current, size),
                 questionService.getQueryWrapper(QuestionQueryRequest));
-        return Result.success(questionService.getQuestionVOPage(QuestionPage));
+        return Result.success(questionService.getQuestionVOPage(QuestionPage)).setMessage("分页获取问题列表成功");
     }
 
     // endregion
@@ -188,28 +210,25 @@ public class QuestionController {
      * @return Result<Boolean>
      */
     @PostMapping("/edit")
+    @Operation(summary = "编辑问题", description = "编辑问题")
     public Result<Boolean> editQuestion(@RequestBody QuestionEditRequest QuestionEditRequest) {
         if (QuestionEditRequest == null || QuestionEditRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Question question = new Question();
         BeanUtils.copyProperties(QuestionEditRequest, question);
-        List<String> tags = QuestionEditRequest.getTags();
-        if (tags != null) {
-            question.setTags(GSON.toJson(tags));
-        }
         // 参数校验
         questionService.validQuestion(question, false);
         Long id = QuestionEditRequest.getId();
         // 判断是否存在
         Question oldQuestion = questionService.getById(id);
         ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
-        // 仅本人或管理员可编辑 TODO: 为啥也要管理员
-        if (!oldQuestion.getUserId().equals(ThreadLocalUtil.getUserId()) && !userService.isAdmin()) {
+        // 仅本人可编辑
+        if (!oldQuestion.getUserId().equals(ThreadLocalUtil.getUserId())) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean result = questionService.updateById(question);
-        return Result.success(result).setMessage("问题编辑成功");
+        return Result.success(result).setMessage("问题编辑成功").setMessage("问题编辑成功");
     }
 
 }

@@ -1,6 +1,7 @@
 package com.shiro.soj.model.vo;
 
 import cn.hutool.json.JSONUtil;
+import com.shiro.soj.model.dto.question.JudgeCase;
 import com.shiro.soj.model.dto.question.JudgeConfig;
 import com.shiro.soj.model.entity.Question;
 import lombok.Data;
@@ -60,6 +61,11 @@ public class QuestionVO implements Serializable {
     private JudgeConfig judgeConfig;
 
     /**
+     * 判题用例
+     */
+    private List<JudgeCase> judgeCase;
+
+    /**
      * 创建题目的用户id
      */
     private Long userId;
@@ -97,6 +103,8 @@ public class QuestionVO implements Serializable {
         questionVO.setTags(tagList);
         JudgeConfig judgeConfig = JSONUtil.toBean(question.getJudgeConfig(), JudgeConfig.class);
         questionVO.setJudgeConfig(judgeConfig);
+        String judgeCase = question.getJudgeCase();
+        questionVO.setJudgeCase(JSONUtil.toList(judgeCase,JudgeCase.class));
         return questionVO;
     }
 

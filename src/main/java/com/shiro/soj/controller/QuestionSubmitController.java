@@ -8,6 +8,7 @@ import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.model.entity.User;
 import com.shiro.soj.service.QuestionSubmitService;
 import com.shiro.soj.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,13 +40,14 @@ public class QuestionSubmitController {
      * @return 提交记录的id
      */
     @PostMapping
+    @Operation(summary = "提交题目", description = "提交题目")
     public Result<Long> questionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest) {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User loginUser = UserVO.toUser(userService.getLoginUser());
         Long questionSubmitId = questionSubmitService.questionSubmit(questionSubmitAddRequest, loginUser);
-        return Result.success(questionSubmitId);
+        return Result.success(questionSubmitId).setMessage("提交成功");
     }
 
 }
