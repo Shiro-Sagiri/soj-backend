@@ -1,4 +1,4 @@
-package enums;
+package com.shiro.soj.enums;
 
 import cn.hutool.core.util.ObjectUtil;
 import lombok.Getter;

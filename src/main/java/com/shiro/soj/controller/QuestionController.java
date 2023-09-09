@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.shiro.soj.annotation.AuthCheck;
 import com.shiro.soj.common.DeleteRequest;
 import com.shiro.soj.model.dto.question.*;
-import enums.ErrorCode;
+import com.shiro.soj.enums.ErrorCode;
 import com.shiro.soj.common.Result;
 import com.shiro.soj.constant.UserConstant;
 import com.shiro.soj.exception.BusinessException;
@@ -231,4 +231,16 @@ public class QuestionController {
         return Result.success(result).setMessage("问题编辑成功").setMessage("问题编辑成功");
     }
 
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @PostMapping("/getQuestionPage")
+    @Operation(summary = "分页获取问题列表(不脱敏)", description = "分页获取问题列表(不脱敏)")
+    public Result<Page<Question>> getQuestionPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
+        long current = questionQueryRequest.getCurrent();
+        long size = questionQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        Page<Question> QuestionPage = questionService.page(new Page<>(current, size),
+                questionService.getQueryWrapper(questionQueryRequest));
+        return Result.success(QuestionPage).setMessage("获取问题列表成功");
+    }
 }

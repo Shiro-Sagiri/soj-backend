@@ -2,7 +2,7 @@ package com.shiro.soj.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import enums.ErrorCode;
+import com.shiro.soj.enums.ErrorCode;
 import com.shiro.soj.constant.UserConstant;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.mapper.UserMapper;

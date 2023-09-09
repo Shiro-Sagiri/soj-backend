@@ -1,6 +1,6 @@
 package com.shiro.soj.exception;
 
-import enums.ErrorCode;
+import com.shiro.soj.enums.ErrorCode;
 
 /**
  * 抛异常工具类

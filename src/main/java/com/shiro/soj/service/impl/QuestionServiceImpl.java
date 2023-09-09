@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import enums.ErrorCode;
-import com.shiro.soj.constant.CommonConstant;
+import com.shiro.soj.enums.ErrorCode;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.exception.ThrowUtils;
 import com.shiro.soj.model.dto.question.QuestionQueryRequest;
@@ -16,7 +15,6 @@ import com.shiro.soj.model.vo.UserVO;
 import com.shiro.soj.service.QuestionService;
 import com.shiro.soj.mapper.QuestionMapper;
 import com.shiro.soj.service.UserService;
-import com.shiro.soj.utils.SqlUtils;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -99,9 +97,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         List<String> tags = questionQueryRequest.getTags();
         String answer = questionQueryRequest.getAnswer();
         Long userId = questionQueryRequest.getUserId();
-        String sortField = questionQueryRequest.getSortField();
-        String sortOrder = questionQueryRequest.getSortOrder();
-
 
         // 拼接查询条件
         wrapper.like(StringUtils.isNotBlank(title), Question::getTitle, title);
@@ -115,8 +110,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         wrapper.eq(ObjectUtils.isNotEmpty(id), Question::getId, id);
         wrapper.eq(ObjectUtils.isNotEmpty(userId), Question::getUserId, userId);
         wrapper.eq(Question::getIsDelete, false);
-        wrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), question -> sortField);
-        //TODO: question -> sortField 可能有BUG
         return wrapper;
     }
 

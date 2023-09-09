@@ -1,4 +1,4 @@
-package enums;
+package com.shiro.soj.enums;
 
 import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;
@@ -8,22 +8,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 编程语言枚举
+ * 用户角色枚举
  *
  * @author Shiro
  */
 @Getter
-public enum QuestionLanguageEnum {
+public enum UserRoleEnum {
 
-    JAVA("java", "java"),
-    CPLUSPLUS("c++", "c++"),
-    GOLANG("golang", "golang");
+    USER("用户", "USER"),
+    ADMIN("管理员", "ADMIN"),
+    BAN("被封号", "BAN");
 
     private final String text;
 
     private final String value;
 
-    QuestionLanguageEnum(String text, String value) {
+    UserRoleEnum(String text, String value) {
         this.text = text;
         this.value = value;
     }
@@ -43,11 +43,11 @@ public enum QuestionLanguageEnum {
      * @param value value
      * @return UserRoleEnum
      */
-    public static QuestionLanguageEnum getEnumByValue(String value) {
+    public static UserRoleEnum getEnumByValue(String value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
-        for (QuestionLanguageEnum anEnum : QuestionLanguageEnum.values()) {
+        for (UserRoleEnum anEnum : UserRoleEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
             }

@@ -1,8 +1,12 @@
 package com.shiro.soj.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shiro.soj.model.dto.questionSubmit.QuestionSubmitAddRequest;
+import com.shiro.soj.model.dto.questionSubmit.QuestionSubmitQueryRequest;
+import com.shiro.soj.model.entity.QuestionSubmit;
+import com.shiro.soj.model.vo.QuestionSubmitVO;
 import com.shiro.soj.model.vo.UserVO;
-import enums.ErrorCode;
+import com.shiro.soj.enums.ErrorCode;
 import com.shiro.soj.common.Result;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.model.entity.User;
@@ -50,4 +54,25 @@ public class QuestionSubmitController {
         return Result.success(questionSubmitId).setMessage("提交成功");
     }
 
+
+    /**
+     * 分页获取提交记录
+     * 普通用户只能查到非代码的公开信息
+     *
+     * @param questionSubmitQueryRequest 查询条件
+     * @return 分页的提交记录
+     */
+    @Operation(summary = "分页获取提交记录", description = "分页获取提交记录")
+    @PostMapping("/page")
+    public Result<Page<QuestionSubmitVO>> getQuestionSubmitPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest) {
+        if (questionSubmitQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        long current = questionSubmitQueryRequest.getCurrent();
+        long size = questionSubmitQueryRequest.getPageSize();
+        //从数据库中查询原始信息
+        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.page(new Page<>(current, size), questionSubmitService.getQueryWrapper(questionSubmitQueryRequest));
+        //将信息脱敏
+        return Result.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage));
+    }
 }

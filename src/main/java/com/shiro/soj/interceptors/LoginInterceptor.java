@@ -1,6 +1,6 @@
 package com.shiro.soj.interceptors;
 
-import enums.ErrorCode;
+import com.shiro.soj.enums.ErrorCode;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.utils.JwtUtil;
 import com.shiro.soj.utils.ThreadLocalUtil;

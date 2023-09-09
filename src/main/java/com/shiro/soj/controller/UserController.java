@@ -1,6 +1,6 @@
 package com.shiro.soj.controller;
 
-import enums.ErrorCode;
+import com.shiro.soj.enums.ErrorCode;
 import com.shiro.soj.common.Result;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.model.dto.user.UserLoginDTO;

@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.shiro.soj.enums.ErrorCode;
+import com.shiro.soj.exception.BusinessException;
 import lombok.Data;
 
 /**
@@ -87,6 +90,24 @@ public class Question implements Serializable {
      * 逻辑删除
      */
     private Integer isDelete;
+
+    /**
+     * 排序字段
+     *
+     * @param fieldName 字段名
+     * @return 排序字段
+     */
+    public Object getSortField(String fieldName) {
+        return switch (fieldName) {
+            case "id" -> this.id;
+            // 添加其他字段的处理逻辑
+            case "submitNum" -> this.submitNum;
+            case "acceptedNum" -> this.acceptedNum;
+            case "createTime" -> this.createTime;
+            case "updateTime" -> this.updateTime;
+            default -> throw new BusinessException(ErrorCode.PARAMS_ERROR, "无效的排序字段：" + fieldName);
+        };
+    }
 
     @Serial
     @TableField(exist = false)

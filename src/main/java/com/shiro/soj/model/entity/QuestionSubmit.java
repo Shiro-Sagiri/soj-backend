@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.shiro.soj.enums.ErrorCode;
+import com.shiro.soj.exception.BusinessException;
 import lombok.Data;
 
 /**
@@ -63,6 +66,24 @@ public class QuestionSubmit implements Serializable {
      * 是否删除
      */
     private Integer isDelete;
+
+    /**
+     * 获取排序字段
+     * @param sortField 排序字段
+     * @return 排序字段对应的值
+     */
+    public Object getSortField(String sortField) {
+        return switch (sortField) {
+            case "id" -> this.getId();
+            case "questionId" -> this.getQuestionId();
+            case "language" -> this.getLanguage();
+            case "status" -> this.getStatus();
+            case "userId" -> this.getUserId();
+            case "createTime" -> this.getCreateTime();
+            case "updateTime" -> this.getUpdateTime();
+            default -> throw new BusinessException(ErrorCode.PARAMS_ERROR, "QuestionSubmit类不存在字段名：" + sortField);
+        };
+    }
 
     @Serial
     @TableField(exist = false)
