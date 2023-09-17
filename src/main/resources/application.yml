@@ -6,9 +6,6 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-  jackson:
-    generator:
-      write-numbers-as-strings: true # 防止前端js精度丢失
 
 # springdoc-openapi项目配置
 springdoc:
