@@ -6,6 +6,15 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd HH:mm:ss # 日期格式
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss # 日期格式
+    time-zone: GMT+8 # 时区
+    serialization:
+      write-dates-as-timestamps: false # 是否将日期转换为时间戳
 
 # springdoc-openapi项目配置
 springdoc:
@@ -44,3 +53,9 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
       id-type: assign_id # 主键类型 assign_id:雪花算法 (限制爬虫)
+aliyun:
+  oss:
+    access-key-id: ${aliOSS.access-key-id}
+    access-key-secret: ${aliOSS.access-key-secret}
+    bucket-name: ${aliOSS.bucket-name}
+    endpoint: ${aliOSS.endpoint}

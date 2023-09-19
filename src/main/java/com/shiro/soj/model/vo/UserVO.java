@@ -2,7 +2,7 @@ package com.shiro.soj.model.vo;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import com.shiro.soj.model.entity.User;
 import lombok.Data;
@@ -44,12 +44,12 @@ public class UserVO implements Serializable {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 更新时间
      */
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
     public static User toUser(UserVO userVO) {
         User user = new User();

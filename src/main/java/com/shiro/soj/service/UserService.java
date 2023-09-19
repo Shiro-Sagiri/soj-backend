@@ -3,6 +3,7 @@ package com.shiro.soj.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shiro.soj.model.dto.user.UserLoginDTO;
 import com.shiro.soj.model.dto.user.UserRegisterDTO;
+import com.shiro.soj.model.dto.user.UserUpdateDTO;
 import com.shiro.soj.model.entity.User;
 import com.shiro.soj.model.vo.UserVO;
 
@@ -40,4 +41,11 @@ public interface UserService extends IService<User> {
      * @return 用户信息
      */
     UserVO getUserVO(User user);
+
+    /**
+     * 用户信息更新
+     * @param userUpdateDTO 用户信息更新DTO
+     * @return 用户视图对象
+     */
+    Long updateUser(UserUpdateDTO userUpdateDTO);
 }

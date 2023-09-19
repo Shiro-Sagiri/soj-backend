@@ -143,13 +143,13 @@ public class QuestionController {
     }
 
     /**
-     * 根据 id 获取
+     * 根据 id 获取(脱敏)
      *
      * @param id id
-     * @return Result<Question>
+     * @return Result<QuestionVO>
      */
-    @GetMapping()
-    @Operation(summary = "根据id获取问题", description = "根据id获取问题")
+    @GetMapping
+    @Operation(summary = "根据id获取问题(脱敏)", description = "根据id获取问题")
     public Result<QuestionVO> getQuestionVOById(Long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -159,6 +159,29 @@ public class QuestionController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         return Result.success(questionService.getQuestionVO(question)).setMessage("获取问题成功");
+    }
+
+    /**
+     * 根据 id 获取
+     *
+     * @param id id
+     * @return Result<Question>
+     */
+    @GetMapping("/getQuestion")
+    @Operation(summary = "根据id获取问题", description = "根据id获取问题")
+    public Result<Question> getQuestionById(Long id) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Question question = questionService.getById(id);
+        if (question == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 仅本人或管理员可删除
+        if (!question.getUserId().equals(ThreadLocalUtil.getUserId()) && !userService.isAdmin()) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        return Result.success(question).setMessage("获取问题成功");
     }
 
     /**

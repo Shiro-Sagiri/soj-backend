@@ -8,17 +8,20 @@ import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.mapper.UserMapper;
 import com.shiro.soj.model.dto.user.UserLoginDTO;
 import com.shiro.soj.model.dto.user.UserRegisterDTO;
+import com.shiro.soj.model.dto.user.UserUpdateDTO;
 import com.shiro.soj.model.entity.User;
 import com.shiro.soj.model.vo.UserVO;
 import com.shiro.soj.service.UserService;
 import com.shiro.soj.utils.JwtUtil;
 import com.shiro.soj.utils.ThreadLocalUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -58,6 +61,45 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "注册失败,系统异常");
         }
         return user.getId();
+    }
+
+    @Override
+    public Long updateUser(UserUpdateDTO userUpdateDTO) {
+        User user = baseMapper.selectById(userUpdateDTO.getId());
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (!StringUtils.isAnyBlank(userUpdateDTO.getUserPassword())) {
+            //如果DTO中密码不为空,即为修改密码操作
+            if (!userUpdateDTO.getUserPassword().equals(userUpdateDTO.getCheckPassword())) {
+                throw new BusinessException(ErrorCode.ERROR_CHECK_PASSWORD);
+            }
+            if (!BCrypt.checkpw(userUpdateDTO.getUserPassword(), user.getUserPassword())) {
+                throw new BusinessException(ErrorCode.ERROR_PASSWORD);
+            }
+            user.setUserPassword(BCrypt.hashpw(userUpdateDTO.getUserPassword(), BCrypt.gensalt()));
+            baseMapper.updateById(user);
+        } else {
+            //如果为空则为修改其他信息
+            if (StringUtils.isAllBlank(userUpdateDTO.getUserRole(), userUpdateDTO.getUserName(), userUpdateDTO.getUserProfile())) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            }
+            if (!StringUtils.isAnyBlank(userUpdateDTO.getUserName())) {
+                user.setUserName(userUpdateDTO.getUserName());
+            }
+            if (!StringUtils.isAnyBlank(userUpdateDTO.getUserProfile())) {
+                user.setUserProfile(userUpdateDTO.getUserProfile());
+            }
+            if (!StringUtils.isAnyBlank(userUpdateDTO.getUserRole())) {
+                //只有管理员才可修改用户权限
+                if (!Objects.equals(user.getUserRole(), UserConstant.ADMIN_ROLE)) {
+                    throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+                }
+                user.setUserRole(userUpdateDTO.getUserRole());
+            }
+            baseMapper.updateById(user);
+        }
+        return userUpdateDTO.getId();
     }
 
     @Override
