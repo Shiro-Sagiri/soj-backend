@@ -24,6 +24,11 @@ public class UserUpdateDTO implements Serializable {
     private String userPassword;
 
     /**
+     * 新密码
+     */
+    private String userNewPassword;
+
+    /**
      * 确认密码
      */
     private String checkPassword;

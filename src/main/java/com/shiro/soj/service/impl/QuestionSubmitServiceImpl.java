@@ -4,27 +4,31 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.shiro.soj.enums.ErrorCode;
+import com.shiro.soj.enums.QuestionLanguageEnum;
+import com.shiro.soj.enums.QuestionSubmitStatusEnum;
 import com.shiro.soj.exception.BusinessException;
+import com.shiro.soj.judge.JudgeService;
+import com.shiro.soj.mapper.QuestionSubmitMapper;
 import com.shiro.soj.model.dto.questionSubmit.QuestionSubmitAddRequest;
 import com.shiro.soj.model.dto.questionSubmit.QuestionSubmitQueryRequest;
 import com.shiro.soj.model.entity.Question;
 import com.shiro.soj.model.entity.QuestionSubmit;
 import com.shiro.soj.model.entity.User;
 import com.shiro.soj.model.vo.QuestionSubmitVO;
+import com.shiro.soj.model.vo.QuestionVO;
 import com.shiro.soj.service.QuestionService;
 import com.shiro.soj.service.QuestionSubmitService;
-import com.shiro.soj.mapper.QuestionSubmitMapper;
 import com.shiro.soj.service.UserService;
 import com.shiro.soj.utils.ThreadLocalUtil;
-import com.shiro.soj.enums.ErrorCode;
-import com.shiro.soj.enums.QuestionLanguageEnum;
-import com.shiro.soj.enums.QuestionSubmitStatusEnum;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Shiro
@@ -39,6 +43,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     private QuestionService questionService;
     @Resource
     private UserService userService;
+    @Resource
+    private QuestionSubmitMapper questionSubmitMapper;
+    @Resource
+    @Lazy
+    private JudgeService judgeService;
 
     @Override
     public Long questionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
@@ -64,7 +73,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (!res) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "提交失败");
         }
-        return questionSubmit.getId();
+        Long questionSubmitId = questionSubmit.getId();
+        //todo: 执行判题服务
+        CompletableFuture.runAsync(() -> judgeService.judge(questionSubmitId));
+        return questionSubmitId;
     }
 
     /**
@@ -107,13 +119,28 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     }
 
     @Override
+    public Page<QuestionSubmit> pageQuery(QuestionSubmitQueryRequest questionSubmitQueryRequest) {
+        List<QuestionSubmit> questionSubmits = questionSubmitMapper.pageQuery(questionSubmitQueryRequest);
+        Long total = questionSubmitMapper.getTotal(questionSubmitQueryRequest);
+        Page<QuestionSubmit> questionSubmitPages = new Page<>(questionSubmitQueryRequest.getCurrent(), questionSubmitQueryRequest.getPageSize(), total);
+        questionSubmitPages.setRecords(questionSubmits);
+        return questionSubmitPages;
+    }
+
+    @Override
     public Page<QuestionSubmitVO> getQuestionSubmitVOPage(Page<QuestionSubmit> questionSubmitPage) {
         List<QuestionSubmit> questionSubmitList = questionSubmitPage.getRecords();
         Page<QuestionSubmitVO> questionSubmitVOPage = new Page<>(questionSubmitPage.getCurrent(), questionSubmitPage.getSize(), questionSubmitPage.getTotal());
         if (CollectionUtils.isEmpty(questionSubmitList)) {
             return questionSubmitVOPage;
         }
-        List<QuestionSubmitVO> submitVOList = questionSubmitList.stream().map(this::getQuestionSubmitVO).toList();
+        List<QuestionSubmitVO> submitVOList = questionSubmitList.stream().map(item -> {
+            QuestionSubmitVO questionSubmitVO = this.getQuestionSubmitVO(item);
+            Long questionId = questionSubmitVO.getQuestionId();
+            QuestionVO questionVO = questionService.getQuestionVO(questionService.getById(questionId));
+            questionSubmitVO.setQuestionVO(questionVO);
+            return questionSubmitVO;
+        }).toList();
         questionSubmitVOPage.setRecords(submitVOList);
         return questionSubmitVOPage;
     }

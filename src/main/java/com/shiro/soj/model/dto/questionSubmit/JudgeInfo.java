@@ -1,5 +1,8 @@
 package com.shiro.soj.model.dto.questionSubmit;
 
+import lombok.Data;
+
+@Data
 public class JudgeInfo {
 
     /**

@@ -71,13 +71,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         if (!StringUtils.isAnyBlank(userUpdateDTO.getUserPassword())) {
             //如果DTO中密码不为空,即为修改密码操作
-            if (!userUpdateDTO.getUserPassword().equals(userUpdateDTO.getCheckPassword())) {
+            if (!userUpdateDTO.getUserNewPassword().equals(userUpdateDTO.getCheckPassword())) {
                 throw new BusinessException(ErrorCode.ERROR_CHECK_PASSWORD);
             }
             if (!BCrypt.checkpw(userUpdateDTO.getUserPassword(), user.getUserPassword())) {
                 throw new BusinessException(ErrorCode.ERROR_PASSWORD);
             }
-            user.setUserPassword(BCrypt.hashpw(userUpdateDTO.getUserPassword(), BCrypt.gensalt()));
+            user.setUserPassword(BCrypt.hashpw(userUpdateDTO.getUserNewPassword(), BCrypt.gensalt()));
             baseMapper.updateById(user);
         } else {
             //如果为空则为修改其他信息

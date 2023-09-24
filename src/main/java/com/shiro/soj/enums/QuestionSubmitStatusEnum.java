@@ -23,12 +23,12 @@ public enum QuestionSubmitStatusEnum {
     /**
      * 成功
      */
-    SUCCEED(2, "成功"),
+    SUCCEED(2, "通过"),
 
     /**
      * 失败
      */
-    FAILED(3, "失败");
+    FAILED(3, "未通过");
 
     /**
      * 值

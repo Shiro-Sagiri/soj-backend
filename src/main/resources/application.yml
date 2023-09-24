@@ -59,3 +59,7 @@ aliyun:
     access-key-secret: ${aliOSS.access-key-secret}
     bucket-name: ${aliOSS.bucket-name}
     endpoint: ${aliOSS.endpoint}
+
+# 代码沙箱配置
+codeSendBox:
+  type: example

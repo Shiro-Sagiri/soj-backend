@@ -7,6 +7,7 @@ import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.model.dto.user.UserLoginDTO;
 import com.shiro.soj.model.dto.user.UserRegisterDTO;
 import com.shiro.soj.model.dto.user.UserUpdateDTO;
+import com.shiro.soj.model.entity.User;
 import com.shiro.soj.model.vo.UserVO;
 import com.shiro.soj.service.UserService;
 import com.shiro.soj.utils.ThreadLocalUtil;
@@ -91,6 +92,12 @@ public class UserController {
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.FILE_UPLOAD_ERROR);
         }
+        User user = userService.getById(ThreadLocalUtil.getUserId());
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        user.setUserAvatar(url);
+        userService.updateById(user);
         return Result.success(url);
     }
 }

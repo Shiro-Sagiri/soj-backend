@@ -17,6 +17,8 @@ import lombok.Data;
 @TableName(value ="question_submit")
 @Data
 public class QuestionSubmit implements Serializable {
+
+
     /**
      * id
      */

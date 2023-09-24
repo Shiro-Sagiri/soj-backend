@@ -79,10 +79,6 @@ public class QuestionVO implements Serializable {
      */
     private Date updateTime;
 
-    /**
-     * 逻辑删除
-     */
-    private Integer isDelete;
 
     @Serial
     private static final long serialVersionUID = 1L;

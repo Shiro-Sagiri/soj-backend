@@ -65,11 +65,6 @@ public class QuestionSubmitVO implements Serializable {
     private Date updateTime;
 
     /**
-     * 提交用户信息
-     */
-    private UserVO userVO;
-
-    /**
      * 题目信息
      */
     private QuestionVO questionVO;

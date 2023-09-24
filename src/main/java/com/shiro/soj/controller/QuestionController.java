@@ -1,6 +1,7 @@
 package com.shiro.soj.controller;
 
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
@@ -195,10 +196,12 @@ public class QuestionController {
     public Result<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
+        LambdaQueryWrapper<Question> wrapper = questionService.getQueryWrapper(questionQueryRequest);
+        wrapper.orderByDesc(Question::getUpdateTime);
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Question> QuestionPage = questionService.page(new Page<>(current, size),
-                questionService.getQueryWrapper(questionQueryRequest));
+        Page<Question> QuestionPage = questionService.page(new Page<>(current, size), wrapper
+        );
         return Result.success(questionService.getQuestionVOPage(QuestionPage)).setMessage("获取问题列表成功");
     }
 
@@ -260,10 +263,12 @@ public class QuestionController {
     public Result<Page<Question>> getQuestionPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
+        LambdaQueryWrapper<Question> wrapper = questionService.getQueryWrapper(questionQueryRequest);
+        wrapper.orderByDesc(Question::getUpdateTime);
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Question> QuestionPage = questionService.page(new Page<>(current, size),
-                questionService.getQueryWrapper(questionQueryRequest));
+        Page<Question> QuestionPage = questionService.page(new Page<>(current, size), wrapper
+        );
         return Result.success(QuestionPage).setMessage("获取问题列表成功");
     }
 }

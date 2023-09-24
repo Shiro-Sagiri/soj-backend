@@ -68,11 +68,11 @@ public class QuestionSubmitController {
         if (questionSubmitQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        long current = questionSubmitQueryRequest.getCurrent();
-        long size = questionSubmitQueryRequest.getPageSize();
+        if (questionSubmitQueryRequest.getTags() != null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
         //从数据库中查询原始信息
-        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.page(new Page<>(current, size), questionSubmitService.getQueryWrapper(questionSubmitQueryRequest));
-        //将信息脱敏
+        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.pageQuery(questionSubmitQueryRequest);
         return Result.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage));
     }
 }

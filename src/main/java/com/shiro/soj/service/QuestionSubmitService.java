@@ -49,4 +49,11 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
      * @return 问题提交封装分页
      */
     Page<QuestionSubmitVO> getQuestionSubmitVOPage(Page<QuestionSubmit> questionSubmitPage);
+
+    /**
+     * 分页查询
+     * @param questionSubmitQueryRequest 查询条件
+     * @return QuestionSubmit
+     */
+    Page<QuestionSubmit> pageQuery(QuestionSubmitQueryRequest questionSubmitQueryRequest);
 }

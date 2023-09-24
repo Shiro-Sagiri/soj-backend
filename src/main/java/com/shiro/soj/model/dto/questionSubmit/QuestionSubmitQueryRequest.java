@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 问题提交查询DTO
@@ -18,6 +19,16 @@ public class QuestionSubmitQueryRequest extends PageRequest implements Serializa
 
     @Serial
     private static final long serialVersionUID = -8573793501776416699L;
+
+    /**
+     * 题目标题
+     */
+    private String title;
+
+    /**
+     * 题目标签列表(JSON字符串)
+     */
+    private List<String> tags;
 
     /**
      * 编程语言
