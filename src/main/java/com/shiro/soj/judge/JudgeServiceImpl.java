@@ -2,6 +2,7 @@ package com.shiro.soj.judge;
 
 import cn.hutool.json.JSONUtil;
 import com.shiro.soj.enums.ErrorCode;
+import com.shiro.soj.enums.JudgeInfoMessageEnum;
 import com.shiro.soj.enums.QuestionSubmitStatusEnum;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.judge.codeSandBox.CodeSendBox;
@@ -11,18 +12,19 @@ import com.shiro.soj.judge.codeSandBox.model.ExecuteCodeRequest;
 import com.shiro.soj.judge.codeSandBox.model.ExecuteCodeResponse;
 import com.shiro.soj.judge.strategy.JudgeContext;
 import com.shiro.soj.model.dto.question.JudgeCase;
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
+import com.shiro.soj.judge.codeSandBox.model.JudgeInfo;
 import com.shiro.soj.model.entity.Question;
 import com.shiro.soj.model.entity.QuestionSubmit;
 import com.shiro.soj.service.QuestionService;
 import com.shiro.soj.service.QuestionSubmitService;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class JudgeServiceImpl implements JudgeService {
@@ -67,7 +69,7 @@ public class JudgeServiceImpl implements JudgeService {
         CodeSendBox codeSendBoxInstance = CodeSendBoxFactory.getCodeSendBoxInstance(type);
         codeSendBoxInstance = new CodeSendBoxProxy(codeSendBoxInstance);
         List<JudgeCase> judgeCaseList = JSONUtil.toList(question.getJudgeCase(), JudgeCase.class);
-        List<String> inputList = judgeCaseList.stream().map(JudgeCase::getInput).toList();
+        List<String> inputList = judgeCaseList.stream().map(JudgeCase::getInput).collect(Collectors.toList());
         ExecuteCodeRequest executeCodeRequest = ExecuteCodeRequest.builder()
                 .code(questionSubmit.getCode())
                 .language(questionSubmit.getLanguage())
@@ -93,7 +95,14 @@ public class JudgeServiceImpl implements JudgeService {
         //修改数据库中的判题结果
         questionSubmitUpdate = new QuestionSubmit();
         questionSubmitUpdate.setId(questionSubmit.getId());
-        questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
+
+        //修改提交状态
+        if (Objects.equals(judgeInfo.getMessage(), JudgeInfoMessageEnum.ACCEPTED.getValue())) {
+            questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
+        } else {
+            questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.FAILED.getValue());
+        }
+
         questionSubmitUpdate.setJudgeInfo(JSONUtil.toJsonStr(judgeInfo));
         success = questionSubmitService.updateById(questionSubmitUpdate);
         if (!success) {

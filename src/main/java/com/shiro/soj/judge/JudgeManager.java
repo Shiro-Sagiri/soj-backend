@@ -4,7 +4,7 @@ import com.shiro.soj.judge.strategy.DefaultJudgeStrategy;
 import com.shiro.soj.judge.strategy.JavaLanguageJudgeStrategy;
 import com.shiro.soj.judge.strategy.JudgeContext;
 import com.shiro.soj.judge.strategy.JudgeStrategy;
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
+import com.shiro.soj.judge.codeSandBox.model.JudgeInfo;
 import com.shiro.soj.model.entity.QuestionSubmit;
 import org.springframework.stereotype.Service;
 

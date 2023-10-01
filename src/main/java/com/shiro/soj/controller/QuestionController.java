@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.shiro.soj.annotation.AuthCheck;
@@ -15,14 +16,23 @@ import com.shiro.soj.common.Result;
 import com.shiro.soj.constant.UserConstant;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.exception.ThrowUtils;
+import com.shiro.soj.model.dto.questionSubmit.QuestionSubmitAddRequest;
+import com.shiro.soj.model.dto.questionSubmit.QuestionSubmitQueryRequest;
 import com.shiro.soj.model.entity.Question;
+import com.shiro.soj.model.entity.QuestionSubmit;
+import com.shiro.soj.model.entity.User;
+import com.shiro.soj.model.vo.QuestionSubmitVO;
 import com.shiro.soj.model.vo.QuestionVO;
+import com.shiro.soj.model.vo.UserVO;
 import com.shiro.soj.service.QuestionService;
+import com.shiro.soj.service.QuestionSubmitService;
 import com.shiro.soj.service.UserService;
 import com.shiro.soj.utils.ThreadLocalUtil;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.Resource;
+
+import javax.annotation.Resource;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +45,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/question")
 @Slf4j
-@Tag(name = "QuestionController", description = "题目相关接口")
+@Api("QuestionController")
 public class QuestionController {
 
     @Resource
@@ -43,6 +53,9 @@ public class QuestionController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private QuestionSubmitService questionSubmitService;
 
     private final static Gson GSON = new Gson();
 
@@ -55,7 +68,7 @@ public class QuestionController {
      * @return Result<Long>
      */
     @PostMapping()
-    @Operation(summary = "创建问题", description = "创建问题")
+    @ApiOperation("创建问题")
     public Result<Long> addQuestion(@RequestBody QuestionAddRequest questionAddRequest) {
         if (questionAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -70,7 +83,7 @@ public class QuestionController {
         }
         question.setJudgeConfig(JSONUtil.toJsonStr(questionAddRequest.getJudgeConfig()));
         List<JudgeCase> judgeCaseList = questionAddRequest.getJudgeCase();
-        List<String> stringList = judgeCaseList.stream().map(JSONUtil::toJsonStr).toList();
+        List<String> stringList = judgeCaseList.stream().map(JSONUtil::toJsonStr).collect(Collectors.toList());
         question.setJudgeCase(stringList.toString());
         question.setUserId(ThreadLocalUtil.getUserId());
         questionService.validQuestion(question, true);
@@ -86,7 +99,7 @@ public class QuestionController {
      * @return Result<Boolean>
      */
     @DeleteMapping("/delete")
-    @Operation(summary = "删除问题", description = "删除问题")
+    @ApiOperation("删除问题")
     public Result<Boolean> deleteQuestion(@RequestBody DeleteRequest deleteRequest) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -111,7 +124,7 @@ public class QuestionController {
      */
     @PutMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @Operation(summary = "更新问题", description = "更新问题")
+    @ApiOperation("更新问题")
     public Result<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest) {
         if (questionUpdateRequest == null || questionUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -129,7 +142,7 @@ public class QuestionController {
         }
         List<JudgeCase> judgeCaseList = questionUpdateRequest.getJudgeCase();
         if (judgeCaseList != null) {
-            List<String> stringList = judgeCaseList.stream().map(JSONUtil::toJsonStr).toList();
+            List<String> stringList = judgeCaseList.stream().map(JSONUtil::toJsonStr).collect(Collectors.toList());
             question.setJudgeCase(stringList.toString());
         }
 
@@ -150,7 +163,7 @@ public class QuestionController {
      * @return Result<QuestionVO>
      */
     @GetMapping
-    @Operation(summary = "根据id获取问题(脱敏)", description = "根据id获取问题")
+    @ApiOperation("根据id获取问题(脱敏)")
     public Result<QuestionVO> getQuestionVOById(Long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -169,7 +182,7 @@ public class QuestionController {
      * @return Result<Question>
      */
     @GetMapping("/getQuestion")
-    @Operation(summary = "根据id获取问题", description = "根据id获取问题")
+    @ApiOperation("根据id获取问题")
     public Result<Question> getQuestionById(Long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -192,7 +205,7 @@ public class QuestionController {
      * @return Result<Page < QuestionVO>>
      */
     @PostMapping("/list")
-    @Operation(summary = "分页获取问题列表", description = "分页获取问题列表")
+    @ApiOperation("分页获取问题列表")
     public Result<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
@@ -212,7 +225,7 @@ public class QuestionController {
      * @return Result<Page < QuestionVO>>
      */
     @PostMapping("/my/list")
-    @Operation(summary = "分页获取当前用户创建的问题列表", description = "分页获取当前用户创建的问题列表")
+    @ApiOperation("分页获取当前用户创建的问题列表")
     public Result<Page<QuestionVO>> listMyQuestionVOByPage(@RequestBody QuestionQueryRequest QuestionQueryRequest) {
         if (QuestionQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -236,7 +249,7 @@ public class QuestionController {
      * @return Result<Boolean>
      */
     @PostMapping("/edit")
-    @Operation(summary = "编辑问题", description = "编辑问题")
+    @ApiOperation("编辑问题")
     public Result<Boolean> editQuestion(@RequestBody QuestionEditRequest QuestionEditRequest) {
         if (QuestionEditRequest == null || QuestionEditRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -259,7 +272,7 @@ public class QuestionController {
 
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/getQuestionPage")
-    @Operation(summary = "分页获取问题列表(不脱敏)", description = "分页获取问题列表(不脱敏)")
+    @ApiOperation("分页获取问题列表(不脱敏)")
     public Result<Page<Question>> getQuestionPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
@@ -270,5 +283,44 @@ public class QuestionController {
         Page<Question> QuestionPage = questionService.page(new Page<>(current, size), wrapper
         );
         return Result.success(QuestionPage).setMessage("获取问题列表成功");
+    }
+
+    /**
+     * 提交题目
+     *
+     * @param questionSubmitAddRequest 添加问题DTO
+     * @return 提交记录的id
+     */
+    @PostMapping("/questionSubmit/submit")
+    @ApiOperation("提交题目")
+    public Result<Long> questionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest) {
+        if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = UserVO.toUser(userService.getLoginUser());
+        Long questionSubmitId = questionSubmitService.questionSubmit(questionSubmitAddRequest, loginUser);
+        return Result.success(questionSubmitId).setMessage("提交成功");
+    }
+
+
+    /**
+     * 分页获取提交记录
+     * 普通用户只能查到非代码的公开信息
+     *
+     * @param questionSubmitQueryRequest 查询条件
+     * @return 分页的提交记录
+     */
+    @ApiOperation("分页获取提交记录")
+    @PostMapping("/questionSubmit/pageList")
+    public Result<Page<QuestionSubmitVO>> getQuestionSubmitPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest) {
+        if (questionSubmitQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if (questionSubmitQueryRequest.getTags() != null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        //从数据库中查询原始信息
+        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.pageQuery(questionSubmitQueryRequest);
+        return Result.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage));
     }
 }

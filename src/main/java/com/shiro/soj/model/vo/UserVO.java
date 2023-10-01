@@ -1,6 +1,5 @@
 package com.shiro.soj.model.vo;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -57,6 +56,5 @@ public class UserVO implements Serializable {
         return user;
     }
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }

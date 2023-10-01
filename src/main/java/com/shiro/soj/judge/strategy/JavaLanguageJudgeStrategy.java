@@ -4,10 +4,11 @@ import cn.hutool.json.JSONUtil;
 import com.shiro.soj.enums.JudgeInfoMessageEnum;
 import com.shiro.soj.model.dto.question.JudgeCase;
 import com.shiro.soj.model.dto.question.JudgeConfig;
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
+import com.shiro.soj.judge.codeSandBox.model.JudgeInfo;
 import com.shiro.soj.model.entity.Question;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * java语言判题策略(未实现)
@@ -20,8 +21,8 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
     public JudgeInfo judge(JudgeContext judgeContext) {
 
         JudgeInfo judgeInfo = judgeContext.getJudgeInfo();
-        Long memory = judgeInfo.getMemory();
-        Long time = judgeInfo.getTime();
+        Long memory = Optional.ofNullable(judgeInfo.getMemory()).orElse(0L);
+        Long time = Optional.ofNullable(judgeInfo.getTime()).orElse(0L);
         List<String> inputList = judgeContext.getInputList();
         List<String> outputList = judgeContext.getOutputList();
         Question question = judgeContext.getQuestion();
@@ -40,7 +41,7 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
         }
         for (int i = 0; i < judgeCaseList.size(); i++) {
             JudgeCase judgeCase = judgeCaseList.get(i);
-            if (judgeCase.getOutput().equals(outputList.get(i))) {
+            if (!judgeCase.getOutput().equals(outputList.get(i))) {
                 judgeInfoMessageEnum = JudgeInfoMessageEnum.WRONG_ANSWER;
                 judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
                 return judgeInfoResponse;

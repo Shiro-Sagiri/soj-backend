@@ -3,7 +3,6 @@ package com.shiro.soj.model.dto.questionSubmit;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -29,7 +28,6 @@ public class QuestionSubmitAddRequest implements Serializable {
      */
     private String code;
 
-    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

@@ -6,7 +6,6 @@ import com.shiro.soj.model.entity.Question;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -79,8 +78,6 @@ public class QuestionVO implements Serializable {
      */
     private Date updateTime;
 
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public static QuestionVO objToVo(Question question) {

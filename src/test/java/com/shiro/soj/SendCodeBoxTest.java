@@ -8,10 +8,11 @@ import com.shiro.soj.judge.codeSandBox.model.ExecuteCodeResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 
-//@SpringBootTest
+@SpringBootTest
 public class SendCodeBoxTest {
 
     @Value("${codeSandBox.type:remote}")
@@ -24,8 +25,11 @@ public class SendCodeBoxTest {
         ExecuteCodeRequest executeCodeRequest = ExecuteCodeRequest.builder()
                 .code("""
                         public class Main {
+
                             public static void main(String[] args) {
-                                System.out.println("Hello World!");
+                                Integer a = Integer.parseInt(args[0]);
+                                Integer b = Integer.parseInt(args[1]);
+                                System.out.println("结果:" + (a + b));
                             }
                         }""")
                 .language("java")

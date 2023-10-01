@@ -6,6 +6,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -14,7 +15,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         //注册TestInterceptor拦截器
         registry.addInterceptor(new LoginInterceptor())
-                .excludePathPatterns(List.of("/swagger-ui/**", "/doc.html/**", "/swagger-resources/**", "/webjars/**", "/v3/**", "/user/login", "/user/register"))      //添加不拦截的请求路径
+                .excludePathPatterns(Arrays.asList("/swagger-ui/**", "/doc.html/**", "/swagger-resources/**", "/webjars/**", "/v3/**", "/user/login", "/user/register", "/v2/**"))      //添加不拦截的请求路径
                 .addPathPatterns("/**");         //添加需要拦截的路径
     }
 

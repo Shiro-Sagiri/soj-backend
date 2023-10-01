@@ -1,6 +1,6 @@
 package com.shiro.soj.judge.strategy;
 
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
+import com.shiro.soj.judge.codeSandBox.model.JudgeInfo;
 
 /**
  * 判题策略

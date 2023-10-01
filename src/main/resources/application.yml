@@ -15,24 +15,36 @@ spring:
     time-zone: GMT+8 # 时区
     serialization:
       write-dates-as-timestamps: false # 是否将日期转换为时间戳
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    timeout: 5000
+  session:
+    store-type: redis
+    timeout: 2592000 # 30天过期
 
-# springdoc-openapi项目配置
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
-  api-docs:
-    path: /v3/api-docs
-  group-configs:
-    - group: 'soj'
-      paths-to-match: '/**'
-      packages-to-scan: com.shiro.soj
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true
   setting:
     language: zh_cn
+  openapi:
+    title: 在线判题系统接口文档
+    description: "在线判题系统接口文档"
+    email: 1796475983@qq.com
+    concat: Shiro
+    url: https://docs.xiaominfo.com
+    version: v4.0
+    license: Apache 2.0
+    license-url: https://stackoverflow.com/
+    terms-of-service-url: https://stackoverflow.com/
+    group:
+      test1:
+        group-name: 在线判题系统
+        api-rule: package
+        api-rule-resources:
+          - com.shiro.soj.controller
 
 server:
   port: 8080
@@ -62,4 +74,4 @@ aliyun:
 
 # 代码沙箱配置
 codeSendBox:
-  type: example
+  type: remote

@@ -21,7 +21,9 @@ import com.shiro.soj.service.QuestionService;
 import com.shiro.soj.service.QuestionSubmitService;
 import com.shiro.soj.service.UserService;
 import com.shiro.soj.utils.ThreadLocalUtil;
-import jakarta.annotation.Resource;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @author Shiro
@@ -74,7 +77,6 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "提交失败");
         }
         Long questionSubmitId = questionSubmit.getId();
-        //todo: 执行判题服务
         CompletableFuture.runAsync(() -> judgeService.judge(questionSubmitId));
         return questionSubmitId;
     }
@@ -140,7 +142,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             QuestionVO questionVO = questionService.getQuestionVO(questionService.getById(questionId));
             questionSubmitVO.setQuestionVO(questionVO);
             return questionSubmitVO;
-        }).toList();
+        }).collect(Collectors.toList());
         questionSubmitVOPage.setRecords(submitVOList);
         return questionSubmitVOPage;
     }

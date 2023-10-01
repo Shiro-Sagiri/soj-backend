@@ -1,13 +1,11 @@
 package com.shiro.soj.model.vo;
 
 import cn.hutool.json.JSONUtil;
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
+import com.shiro.soj.judge.codeSandBox.model.JudgeInfo;
 import com.shiro.soj.model.entity.QuestionSubmit;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -69,7 +67,6 @@ public class QuestionSubmitVO implements Serializable {
      */
     private QuestionVO questionVO;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public static QuestionSubmitVO objToVo(QuestionSubmit questionSubmit) {
@@ -79,7 +76,7 @@ public class QuestionSubmitVO implements Serializable {
         QuestionSubmitVO questionSubmitVO = new QuestionSubmitVO();
         BeanUtils.copyProperties(questionSubmit, questionSubmitVO);
         String judgeInfo = questionSubmit.getJudgeInfo();
-        if (StringUtils.isAnyBlank(judgeInfo)) {
+        if (!StringUtils.isAnyBlank(judgeInfo)) {
             questionSubmitVO.setJudgeInfo(JSONUtil.toBean(judgeInfo, JudgeInfo.class));
         }
         return questionSubmitVO;

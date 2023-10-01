@@ -1,7 +1,6 @@
 package com.shiro.soj.judge.codeSandBox.model;
 
 
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

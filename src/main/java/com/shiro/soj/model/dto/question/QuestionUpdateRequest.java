@@ -2,7 +2,6 @@ package com.shiro.soj.model.dto.question;
 
 import lombok.Data;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -58,6 +57,5 @@ public class QuestionUpdateRequest implements Serializable {
      */
     private List<JudgeCase> judgeCase;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }

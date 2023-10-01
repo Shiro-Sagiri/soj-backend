@@ -15,7 +15,7 @@ import com.shiro.soj.model.vo.UserVO;
 import com.shiro.soj.service.QuestionService;
 import com.shiro.soj.mapper.QuestionMapper;
 import com.shiro.soj.service.UserService;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

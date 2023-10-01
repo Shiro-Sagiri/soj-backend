@@ -1,7 +1,7 @@
 package com.shiro.soj.judge.strategy;
 
 import com.shiro.soj.model.dto.question.JudgeCase;
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
+import com.shiro.soj.judge.codeSandBox.model.JudgeInfo;
 import com.shiro.soj.model.entity.Question;
 import com.shiro.soj.model.entity.QuestionSubmit;
 import lombok.Data;

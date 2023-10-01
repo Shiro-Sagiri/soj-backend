@@ -1,39 +1,34 @@
 package com.shiro.soj.controller;
 
-import com.aliyun.oss.AliOSSUtils;
 import com.shiro.soj.enums.ErrorCode;
 import com.shiro.soj.common.Result;
 import com.shiro.soj.exception.BusinessException;
 import com.shiro.soj.model.dto.user.UserLoginDTO;
 import com.shiro.soj.model.dto.user.UserRegisterDTO;
 import com.shiro.soj.model.dto.user.UserUpdateDTO;
-import com.shiro.soj.model.entity.User;
 import com.shiro.soj.model.vo.UserVO;
 import com.shiro.soj.service.UserService;
 import com.shiro.soj.utils.ThreadLocalUtil;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.Resource;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.annotation.Resource;
 
 @RestController
 @Slf4j
 @RequestMapping("/user")
-@Tag(name = "user", description = "用户相关接口")
+@Api("user")
 public class UserController {
 
     @Resource
     private UserService userService;
-    @Resource
-    private AliOSSUtils aliOSSUtils;
 
     @PostMapping("/register")
-    @Operation(summary = "用户注册")
+    @ApiOperation("用户注册")
     public Result<Long> userRegister(@RequestBody UserRegisterDTO userRegisterDTO) {
         if (userRegisterDTO == null || StringUtils.isAnyBlank(userRegisterDTO.getUserAccount(), userRegisterDTO.getUserPassword(), userRegisterDTO.getCheckPassword())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
@@ -43,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "用户登入")
+    @ApiOperation("用户登入")
     public Result<String> userLogin(@RequestBody UserLoginDTO userLoginDTO) {
         if (userLoginDTO == null || StringUtils.isAnyBlank(userLoginDTO.getUserAccount(), userLoginDTO.getUserPassword())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
@@ -53,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/getLoginUser")
-    @Operation(summary = "获取登录用户信息")
+    @ApiOperation("获取登录用户信息")
     public Result<UserVO> getLoginUser() {
         UserVO userVO = userService.getLoginUser();
         return Result.success(userVO).setMessage("获取成功");
@@ -66,7 +61,7 @@ public class UserController {
      * @return 用户视图对象
      */
     @PutMapping
-    @Operation(summary = "修改用户个人信息")
+    @ApiOperation("修改用户个人信息")
     public Result<Long> updateUserInfo(@RequestBody UserUpdateDTO userUpdateDTO) {
         log.info("用户信息更新");
         if (userUpdateDTO == null) {
@@ -83,21 +78,23 @@ public class UserController {
     }
 
     @PostMapping("/updateAvatar")
-    @Operation(summary = "修改头像")
+    @ApiOperation("修改头像")
     public Result<String> updateUserAvatar(@RequestBody MultipartFile file) {
-        log.info("文件上传");
-        String url;
-        try {
-            url = aliOSSUtils.upload(file);
-        } catch (IOException e) {
-            throw new BusinessException(ErrorCode.FILE_UPLOAD_ERROR);
-        }
-        User user = userService.getById(ThreadLocalUtil.getUserId());
-        if (user == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
-        user.setUserAvatar(url);
-        userService.updateById(user);
-        return Result.success(url);
+        log.info("文件上传TODO");
+        //TODO 更换版本后，文件上传功能暂时不可用
+//        String url;
+//        try {
+//            url = aliOSSUtils.upload(file);
+//        } catch (IOException e) {
+//            throw new BusinessException(ErrorCode.FILE_UPLOAD_ERROR);
+//        }
+//        User user = userService.getById(ThreadLocalUtil.getUserId());
+//        if (user == null) {
+//            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+//        }
+//        user.setUserAvatar(url);
+//        userService.updateById(user);
+//        return Result.success(url);
+        return Result.success("接口暂时不可用");
     }
 }

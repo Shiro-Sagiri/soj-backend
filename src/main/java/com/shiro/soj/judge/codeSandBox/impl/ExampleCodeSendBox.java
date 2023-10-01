@@ -5,7 +5,7 @@ import com.shiro.soj.enums.QuestionSubmitStatusEnum;
 import com.shiro.soj.judge.codeSandBox.CodeSendBox;
 import com.shiro.soj.judge.codeSandBox.model.ExecuteCodeRequest;
 import com.shiro.soj.judge.codeSandBox.model.ExecuteCodeResponse;
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
+import com.shiro.soj.judge.codeSandBox.model.JudgeInfo;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

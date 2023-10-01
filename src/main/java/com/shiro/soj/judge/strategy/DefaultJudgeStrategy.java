@@ -4,7 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.shiro.soj.enums.JudgeInfoMessageEnum;
 import com.shiro.soj.model.dto.question.JudgeCase;
 import com.shiro.soj.model.dto.question.JudgeConfig;
-import com.shiro.soj.model.dto.questionSubmit.JudgeInfo;
+import com.shiro.soj.judge.codeSandBox.model.JudgeInfo;
 import com.shiro.soj.model.entity.Question;
 
 import java.util.List;
