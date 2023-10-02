@@ -65,12 +65,16 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
       id-type: assign_id # 主键类型 assign_id:雪花算法 (限制爬虫)
-aliyun:
-  oss:
-    access-key-id: ${aliOSS.access-key-id}
-    access-key-secret: ${aliOSS.access-key-secret}
-    bucket-name: ${aliOSS.bucket-name}
-    endpoint: ${aliOSS.endpoint}
+
+# 阿里云OSS配置
+oss:
+  bucket-name: ${aliOSS.bucket-name}
+alibaba:
+  cloud:
+    access-key: ${aliOSS.access-key-id}
+    secret-key: ${aliOSS.access-key-secret}
+    oss:
+      endpoint: ${aliOSS.endpoint}
 
 # 代码沙箱配置
 codeSendBox:
